@@ -1,0 +1,19 @@
+name: iOS
+on:
+  push:
+  pull_request:
+jobs:
+  build:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Tools
+        run: brew install xcodegen cmake
+      - name: Core tests
+        run: swift test
+      - name: Prepare pinned llama.cpp
+        run: bash scripts/bootstrap.sh
+      - name: Simulator build
+        run: xcodebuild -project Souchastnik.xcodeproj -scheme Souchastnik -sdk iphonesimulator -configuration Debug -derivedDataPath build/DerivedData CODE_SIGNING_ALLOWED=NO build
+      - name: iPhone build
+        run: xcodebuild -project Souchastnik.xcodeproj -scheme Souchastnik -sdk iphoneos -configuration Release -derivedDataPath build/Device CODE_SIGNING_ALLOWED=NO build

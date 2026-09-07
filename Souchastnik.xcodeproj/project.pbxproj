@@ -1,0 +1,581 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		08E487E5E421DBF06DCE8178 /* DictionaryPack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 807CFDD57CA69C4B880BAEE2 /* DictionaryPack.swift */; };
+		0A879955BD2C8D4CF29A2121 /* ConstrainedChoice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 813E9DC87CF79E568AE7661F /* ConstrainedChoice.swift */; };
+		1878A733C78D637555026F19 /* Analysis.swift in Sources */ = {isa = PBXBuildFile; fileRef = C482C259F7AD12E9BC6D149B /* Analysis.swift */; };
+		20789A5012D51416C92220D7 /* LICENSE.txt in Resources */ = {isa = PBXBuildFile; fileRef = 5C9B4126C9E90FC79DE41FAB /* LICENSE.txt */; };
+		2499FB67056ED66F1B6282F1 /* SetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CB53C1BDA104124BB259DE0 /* SetupView.swift */; };
+		26DE5A91F4902398FFA44B31 /* DictionaryPack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 807CFDD57CA69C4B880BAEE2 /* DictionaryPack.swift */; };
+		278F17951DE51AF8B90348AF /* SharedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69AF3E81ADAF72F61F1E85E /* SharedStore.swift */; };
+		2B3F4416CF218D090CD67D79 /* Analysis.swift in Sources */ = {isa = PBXBuildFile; fileRef = C482C259F7AD12E9BC6D149B /* Analysis.swift */; };
+		34809FA044F09AC24B7DB76B /* SouchastnikKeyboard.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 9E1C4CDC40C1272A03821C75 /* SouchastnikKeyboard.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		3C0C284D70074021397FF1D3 /* ModelStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4288071CFB7311377C608D0E /* ModelStore.swift */; };
+		56FD76141B06848AF0E8A743 /* llama-LICENSE.txt in Resources */ = {isa = PBXBuildFile; fileRef = 942E71B6EE41CC35710DF1FE /* llama-LICENSE.txt */; };
+		57B0339D6417F736F27AC312 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CC3C8D0F37FF80982ED81422 /* Assets.xcassets */; };
+		6647B6EAEF60C5977F8F2B75 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 7C4289C4BEDB79C4B499D3AE /* PrivacyInfo.xcprivacy */; };
+		6DFA1BAB88245FC51A557D27 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8F19C5C428A7E1813062F61 /* AppState.swift */; };
+		74A45BA49A9AA77271FE7DFC /* SouchastnikApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72DA1A37DBD08F51907C34C9 /* SouchastnikApp.swift */; };
+		788021B058A57F77933B53BE /* KeyboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65C475DC180A255686288CC1 /* KeyboardViewController.swift */; };
+		9B07D6F6EA00C6C5E354F384 /* DictionaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BED2F017F1B62225DC72339 /* DictionaryView.swift */; };
+		9E7EFA9DD32B9284B183921A /* llama.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0323890495F15546D76AAC97 /* llama.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B16FD9CB1D5D2B815CB06E28 /* ConstrainedChoice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 813E9DC87CF79E568AE7661F /* ConstrainedChoice.swift */; };
+		B4CA67BFC5DA258306057468 /* LocalJudge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C2282CA672B3DB99BF09E90 /* LocalJudge.swift */; };
+		B5BD10F9659592BA296824B4 /* AnalyzeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF78FAF2BECF0247F8C0D69D /* AnalyzeView.swift */; };
+		B9826E781CCFD08634D13069 /* SharedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69AF3E81ADAF72F61F1E85E /* SharedStore.swift */; };
+		CB7D673AE278AC0FBD5D6475 /* llama.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0323890495F15546D76AAC97 /* llama.xcframework */; };
+		F9664BF95081896CA5ACFDA3 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 7C4289C4BEDB79C4B499D3AE /* PrivacyInfo.xcprivacy */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		C9DC06479229AEF1BEFCBD28 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D560E5547F581AAC6E0A1D32 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E4913C392752970F62A41B91;
+			remoteInfo = SouchastnikKeyboard;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		2613E2B5F2DD450334261671 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				9E7EFA9DD32B9284B183921A /* llama.xcframework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AEC53828F21166AAEB192037 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				34809FA044F09AC24B7DB76B /* SouchastnikKeyboard.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		0323890495F15546D76AAC97 /* llama.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = llama.xcframework; path = Vendor/llama.xcframework; sourceTree = "<group>"; };
+		0CB53C1BDA104124BB259DE0 /* SetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetupView.swift; sourceTree = "<group>"; };
+		3CE861356ED5B0CC71BC7B26 /* Souchastnik.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Souchastnik.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4288071CFB7311377C608D0E /* ModelStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelStore.swift; sourceTree = "<group>"; };
+		5BED2F017F1B62225DC72339 /* DictionaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictionaryView.swift; sourceTree = "<group>"; };
+		5C9B4126C9E90FC79DE41FAB /* LICENSE.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
+		65C475DC180A255686288CC1 /* KeyboardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardViewController.swift; sourceTree = "<group>"; };
+		72DA1A37DBD08F51907C34C9 /* SouchastnikApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SouchastnikApp.swift; sourceTree = "<group>"; };
+		7C2282CA672B3DB99BF09E90 /* LocalJudge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalJudge.swift; sourceTree = "<group>"; };
+		7C4289C4BEDB79C4B499D3AE /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		807CFDD57CA69C4B880BAEE2 /* DictionaryPack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictionaryPack.swift; sourceTree = "<group>"; };
+		813E9DC87CF79E568AE7661F /* ConstrainedChoice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConstrainedChoice.swift; sourceTree = "<group>"; };
+		942E71B6EE41CC35710DF1FE /* llama-LICENSE.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "llama-LICENSE.txt"; sourceTree = "<group>"; };
+		9E1C4CDC40C1272A03821C75 /* SouchastnikKeyboard.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = SouchastnikKeyboard.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		C482C259F7AD12E9BC6D149B /* Analysis.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Analysis.swift; sourceTree = "<group>"; };
+		CC3C8D0F37FF80982ED81422 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		D8F19C5C428A7E1813062F61 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		DF78FAF2BECF0247F8C0D69D /* AnalyzeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyzeView.swift; sourceTree = "<group>"; };
+		E69AF3E81ADAF72F61F1E85E /* SharedStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedStore.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		24B437152F44BAEFA1A566BA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CB7D673AE278AC0FBD5D6475 /* llama.xcframework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0A0BA8FA889D08320F30E25D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				0323890495F15546D76AAC97 /* llama.xcframework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		133FDB356BA2D93C0B6B2D22 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				E69AF3E81ADAF72F61F1E85E /* SharedStore.swift */,
+			);
+			name = Shared;
+			path = iOS/Shared;
+			sourceTree = "<group>";
+		};
+		1F7B661892A43217873F25B8 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				CC3C8D0F37FF80982ED81422 /* Assets.xcassets */,
+				5C9B4126C9E90FC79DE41FAB /* LICENSE.txt */,
+				942E71B6EE41CC35710DF1FE /* llama-LICENSE.txt */,
+				7C4289C4BEDB79C4B499D3AE /* PrivacyInfo.xcprivacy */,
+			);
+			name = Resources;
+			path = iOS/Resources;
+			sourceTree = "<group>";
+		};
+		5EB79E2A8EBD1A10C0B5C665 /* Keyboard */ = {
+			isa = PBXGroup;
+			children = (
+				65C475DC180A255686288CC1 /* KeyboardViewController.swift */,
+			);
+			name = Keyboard;
+			path = iOS/Keyboard;
+			sourceTree = "<group>";
+		};
+		9A951A3F8B00613BE70F52F5 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				DF78FAF2BECF0247F8C0D69D /* AnalyzeView.swift */,
+				D8F19C5C428A7E1813062F61 /* AppState.swift */,
+				5BED2F017F1B62225DC72339 /* DictionaryView.swift */,
+				7C2282CA672B3DB99BF09E90 /* LocalJudge.swift */,
+				4288071CFB7311377C608D0E /* ModelStore.swift */,
+				0CB53C1BDA104124BB259DE0 /* SetupView.swift */,
+				72DA1A37DBD08F51907C34C9 /* SouchastnikApp.swift */,
+			);
+			name = App;
+			path = iOS/App;
+			sourceTree = "<group>";
+		};
+		D137CB340674C892A5EF7234 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				3CE861356ED5B0CC71BC7B26 /* Souchastnik.app */,
+				9E1C4CDC40C1272A03821C75 /* SouchastnikKeyboard.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F7C2ABABFE09869D3D469C91 /* SouchastnikCore */ = {
+			isa = PBXGroup;
+			children = (
+				C482C259F7AD12E9BC6D149B /* Analysis.swift */,
+				813E9DC87CF79E568AE7661F /* ConstrainedChoice.swift */,
+				807CFDD57CA69C4B880BAEE2 /* DictionaryPack.swift */,
+			);
+			name = SouchastnikCore;
+			path = Sources/SouchastnikCore;
+			sourceTree = "<group>";
+		};
+		FF57D3924F8A49BE60BA8884 = {
+			isa = PBXGroup;
+			children = (
+				9A951A3F8B00613BE70F52F5 /* App */,
+				5EB79E2A8EBD1A10C0B5C665 /* Keyboard */,
+				1F7B661892A43217873F25B8 /* Resources */,
+				133FDB356BA2D93C0B6B2D22 /* Shared */,
+				F7C2ABABFE09869D3D469C91 /* SouchastnikCore */,
+				0A0BA8FA889D08320F30E25D /* Frameworks */,
+				D137CB340674C892A5EF7234 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		7484C35A8FDB40F8AB775117 /* Souchastnik */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E33D296B280E9A1219B2A636 /* Build configuration list for PBXNativeTarget "Souchastnik" */;
+			buildPhases = (
+				F1E18BD37852BE0A2A09F811 /* Sources */,
+				4E59BB97129E49350AC1C794 /* Resources */,
+				24B437152F44BAEFA1A566BA /* Frameworks */,
+				AEC53828F21166AAEB192037 /* Embed Foundation Extensions */,
+				2613E2B5F2DD450334261671 /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				ED19B35AF73A1F509CCEE628 /* PBXTargetDependency */,
+			);
+			name = Souchastnik;
+			packageProductDependencies = (
+			);
+			productName = Souchastnik;
+			productReference = 3CE861356ED5B0CC71BC7B26 /* Souchastnik.app */;
+			productType = "com.apple.product-type.application";
+		};
+		E4913C392752970F62A41B91 /* SouchastnikKeyboard */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AD96336A70367743391D9A67 /* Build configuration list for PBXNativeTarget "SouchastnikKeyboard" */;
+			buildPhases = (
+				23A7DAB974E14405C35DDAFF /* Sources */,
+				2B1EC4CEB5F6F740B4A76FC9 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SouchastnikKeyboard;
+			packageProductDependencies = (
+			);
+			productName = SouchastnikKeyboard;
+			productReference = 9E1C4CDC40C1272A03821C75 /* SouchastnikKeyboard.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		D560E5547F581AAC6E0A1D32 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					7484C35A8FDB40F8AB775117 = {
+						ProvisioningStyle = Automatic;
+					};
+					E4913C392752970F62A41B91 = {
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 88AEF38D8FD60BD89368990A /* Build configuration list for PBXProject "Souchastnik" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = FF57D3924F8A49BE60BA8884;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = D137CB340674C892A5EF7234 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				7484C35A8FDB40F8AB775117 /* Souchastnik */,
+				E4913C392752970F62A41B91 /* SouchastnikKeyboard */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		2B1EC4CEB5F6F740B4A76FC9 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6647B6EAEF60C5977F8F2B75 /* PrivacyInfo.xcprivacy in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4E59BB97129E49350AC1C794 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				57B0339D6417F736F27AC312 /* Assets.xcassets in Resources */,
+				20789A5012D51416C92220D7 /* LICENSE.txt in Resources */,
+				F9664BF95081896CA5ACFDA3 /* PrivacyInfo.xcprivacy in Resources */,
+				56FD76141B06848AF0E8A743 /* llama-LICENSE.txt in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		23A7DAB974E14405C35DDAFF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2B3F4416CF218D090CD67D79 /* Analysis.swift in Sources */,
+				0A879955BD2C8D4CF29A2121 /* ConstrainedChoice.swift in Sources */,
+				08E487E5E421DBF06DCE8178 /* DictionaryPack.swift in Sources */,
+				788021B058A57F77933B53BE /* KeyboardViewController.swift in Sources */,
+				278F17951DE51AF8B90348AF /* SharedStore.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F1E18BD37852BE0A2A09F811 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1878A733C78D637555026F19 /* Analysis.swift in Sources */,
+				B5BD10F9659592BA296824B4 /* AnalyzeView.swift in Sources */,
+				6DFA1BAB88245FC51A557D27 /* AppState.swift in Sources */,
+				B16FD9CB1D5D2B815CB06E28 /* ConstrainedChoice.swift in Sources */,
+				26DE5A91F4902398FFA44B31 /* DictionaryPack.swift in Sources */,
+				9B07D6F6EA00C6C5E354F384 /* DictionaryView.swift in Sources */,
+				B4CA67BFC5DA258306057468 /* LocalJudge.swift in Sources */,
+				3C0C284D70074021397FF1D3 /* ModelStore.swift in Sources */,
+				2499FB67056ED66F1B6282F1 /* SetupView.swift in Sources */,
+				B9826E781CCFD08634D13069 /* SharedStore.swift in Sources */,
+				74A45BA49A9AA77271FE7DFC /* SouchastnikApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		ED19B35AF73A1F509CCEE628 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E4913C392752970F62A41B91 /* SouchastnikKeyboard */;
+			targetProxy = C9DC06479229AEF1BEFCBD28 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		02C8E873E4C804D571EBA5EB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = iOS/Souchastnik.entitlements;
+				INFOPLIST_FILE = "iOS/Keyboard-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = dev.souchastnik.ios.keyboard;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		77366CA34511F405741E5833 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = iOS/Souchastnik.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"Vendor\"",
+				);
+				INFOPLIST_FILE = "iOS/App-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = dev.souchastnik.ios;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		8E3128399DB92B0C1935E0BC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				APP_GROUP_IDENTIFIER = group.dev.souchastnik.ios;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = x86_64;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		D783C06525818BC8B07488C0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = iOS/Souchastnik.entitlements;
+				INFOPLIST_FILE = "iOS/Keyboard-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = dev.souchastnik.ios.keyboard;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		E889286944A73400FE2CB5D7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				APP_GROUP_IDENTIFIER = group.dev.souchastnik.ios;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = x86_64;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		EF0A1EFD5380DBAA873C261A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = iOS/Souchastnik.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"Vendor\"",
+				);
+				INFOPLIST_FILE = "iOS/App-Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = dev.souchastnik.ios;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		88AEF38D8FD60BD89368990A /* Build configuration list for PBXProject "Souchastnik" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E889286944A73400FE2CB5D7 /* Debug */,
+				8E3128399DB92B0C1935E0BC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		AD96336A70367743391D9A67 /* Build configuration list for PBXNativeTarget "SouchastnikKeyboard" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				02C8E873E4C804D571EBA5EB /* Debug */,
+				D783C06525818BC8B07488C0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		E33D296B280E9A1219B2A636 /* Build configuration list for PBXNativeTarget "Souchastnik" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EF0A1EFD5380DBAA873C261A /* Debug */,
+				77366CA34511F405741E5833 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = D560E5547F581AAC6E0A1D32 /* Project object */;
+}

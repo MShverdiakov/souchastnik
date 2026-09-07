@@ -57,12 +57,9 @@ echo "== 4/4 квантизация Q4_0 (на ARM с dotprod у Q4_0 есть r
 "$LLAMA/build/bin/llama-quantize" \
     --imatrix "$WORK/souchastnik.imatrix" \
     "$WORK/souchastnik-f16.gguf" \
-    "$WORK/libmodel-qwen35-08b-q40.so" \
+    "$WORK/souchastnik-qwen35-08b-q40.gguf" \
     Q4_0
 
-ls -la "$WORK/libmodel-qwen35-08b-q40.so"
+ls -la "$WORK/souchastnik-qwen35-08b-q40.gguf"
 echo
-echo "Готово. Расширение .so -- не ошибка: файл кладётся в"
-echo "app/src/main/jniLibs/arm64-v8a/ и устанавливается системой"
-echo "как нативная библиотека, распакованной, пригодной для mmap."
-echo "Подробнее: app/src/main/jniLibs/README.md"
+echo "Готово. Импортируйте GGUF в iOS-приложении на вкладке Словари."

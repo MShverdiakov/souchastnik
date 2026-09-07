@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Палитра лок-апа (docs/logo/lockup-dark.svg) — тёмная тема. -->
-<resources>
-    <color name="brand_red">#C0392B</color>
-    <!-- Тот же фон, что у строки над клавишами (VerdictStrip). -->
-    <color name="brand_bg">#17171A</color>
-    <color name="brand_ink">#F2F2F2</color>
-    <color name="brand_muted">#8A8A90</color>
-</resources>

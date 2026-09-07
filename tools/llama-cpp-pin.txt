@@ -1,17 +1,3 @@
-# Ревизия llama.cpp, под которую написан app/src/main/cpp/llama_bridge.cpp.
-#
-# Проверено 2026-08-31: в этой ревизии есть LLM_ARCH_QWEN35 (имя в GGUF
-# "qwen35") и все 35 функций, которые вызывает llama_bridge.cpp.
-# Соответствует релизу b10726. Перепроверить командой:
-#   git -C third_party/llama.cpp rev-parse HEAD
-#
-# Требование: ревизия ДОЛЖНА содержать поддержку архитектуры qwen35
-# (Gated DeltaNet). Более старые сборки не загрузят модель вообще.
-#
-# API llama.cpp ломается регулярно. Симптомы устаревшего моста:
-#   - llama_memory_clear не найден      -> раньше звался llama_kv_cache_clear
-#   - llama_init_from_model не найден   -> раньше llama_new_context_with_model
-#   - llama_model_load_from_file        -> раньше llama_load_model_from_file
-# Обновление сабмодуля -- всегда отдельный коммит с проверкой сборки.
-
+# AI runtime used by the native Swift iOS implementation.
+# Release b10726; Qwen3.5 / qwen35 and llama_memory_clear supported.
 PIN=85c55223caf0a2ad0d1d88e5a73ab3fe36107867

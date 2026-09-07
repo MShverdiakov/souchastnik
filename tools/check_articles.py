@@ -13,7 +13,7 @@ Triggers.match возвращает объединение кодов срабо
 
 Запуск из корня репозитория:
 
-    python -X utf8 tools/check_articles.py
+    python3 -X utf8 tools/check_articles.py /path/to/original/assets
 
 Код возврата 1, если хоть один инвариант нарушен -- годится для хука.
 """
@@ -22,7 +22,7 @@ import json
 import sys
 from pathlib import Path
 
-ASSETS = Path(__file__).resolve().parent.parent / "app" / "src" / "main" / "assets"
+ASSETS = Path(sys.argv[1]) if len(sys.argv) > 1 else Path("Data/Private")
 
 
 def load(name):

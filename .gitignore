@@ -1,50 +1,16 @@
-.gradle/
+.DS_Store
+.build/
 build/
-local.properties
-.idea/
-*.iml
-.cxx/
-third_party/
-
-# Релизный ключ и пароли к нему. Потеря этого файла = потеря возможности
-# обновлять уже установленное приложение: Android не примет APK, подписанный
-# другим ключом. Хранить вне репозитория и в бэкапе.
-keystore.properties
-*.jks
-*.keystore
-
-# Веса модели в git не едут. Как собрать релизный APK -- см.
-# app/src/main/jniLibs/README.md
-app/src/main/jniLibs/arm64-v8a/*.so
-!app/src/main/jniLibs/arm64-v8a/.gitkeep
+DerivedData/
+Vendor/
+*.xcuserstate
+xcuserdata/
 *.gguf
 *.imatrix
-
-# Артефакты обучения
-train/out/
-train/data/*.jsonl
-
-# Локальные примеры фраз для tools/try.py.
-# Дословные оскорбления в публичном репозитории -- лишний риск для автора,
-# поэтому промпту они подкладываются локально.
-tools/examples.local.json
-
-# Не для публичного репозитория: заметки, замеры, обучение, демо.
-# Всё это живёт локально.
-docs/
-train/
-tools/try.py
-tools/desktop_probe.py
-tools/run_bench.sh
-
-# Python
+*.so
+Data/Private/
 __pycache__/
 *.pyc
-
-# Ассеты целиком в репозиторий не идут: дословные оскорбления и промпты
-# публиковать под своим именем — лишний риск. В APK файлы попадают.
-app/src/main/assets/
-
-# Контрольный набор и скрипт сравнения вариантов: дословные фразы, локально.
-tools/testset.local.json
-tools/bench_variants.py
+train/
+third_party/
+tools/*.local.json
