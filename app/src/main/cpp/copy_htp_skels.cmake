@@ -1,0 +1,21 @@
+# Копирует DSP-skel libggml-htp-v*.so в каталог, который AGP кладёт в APK.
+# ExternalProject может оставить файл в CMAKE_CURRENT_BINARY_DIR или глубже,
+# в htp-vXX-prefix/src/htp-vXX-build/.
+if(NOT src_root OR NOT dst_dir)
+    message(FATAL_ERROR "copy_htp_skels.cmake: src_root and dst_dir required")
+endif()
+file(GLOB_RECURSE skels "${src_root}/libggml-htp-v*.so")
+if(NOT skels)
+    message(FATAL_ERROR "HTP skels not found under ${src_root}")
+endif()
+file(MAKE_DIRECTORY "${dst_dir}")
+set(_copied "")
+foreach(s IN LISTS skels)
+    get_filename_component(name "${s}" NAME)
+    if(name MATCHES "^libggml-htp-v[0-9]+\\.so$")
+        execute_process(COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${s}" "${dst_dir}/${name}")
+        list(APPEND _copied "${name}")
+    endif()
+endforeach()
+list(REMOVE_DUPLICATES _copied)
+message(STATUS "HTP skels -> ${dst_dir}: ${_copied}")

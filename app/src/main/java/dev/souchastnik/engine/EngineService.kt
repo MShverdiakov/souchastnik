@@ -60,9 +60,12 @@ class EngineService : Service() {
             if (!Cpu.hasDotprod()) Log.w(TAG, "процессор без dotprod: медленный путь")
 
             val t0 = System.currentTimeMillis()
+            val adsp = LlamaBridge.stageHtpSkels(
+                applicationInfo.nativeLibraryDir, File(filesDir, "htp"))
             handle = LlamaBridge.init(
-                model.absolutePath, applicationInfo.nativeLibraryDir, Cpu.threadCount())
-            Log.i(TAG, "load: handle=$handle, ggml-cpu=${LlamaBridge.backendName()} " +
+                model.absolutePath, applicationInfo.nativeLibraryDir, Cpu.threadCount(),
+                forceCpu = false, adspDir = adsp)
+            Log.i(TAG, "load: handle=$handle, backend=${LlamaBridge.backendName()} " +
                 "за ${System.currentTimeMillis() - t0} мс")
             return if (handle != 0L) LOAD_OK else LOAD_INIT_FAILED
         }

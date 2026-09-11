@@ -39,7 +39,11 @@
 #include <algorithm>
 #include <atomic>
 #include <chrono>
+#include <cstdint>
+#include <cstdlib>
 #include <cstring>
+#include <exception>
+#include <mutex>
 #include <string>
 #include <vector>
 
@@ -49,6 +53,19 @@
 #define TAG "souchastnik-native"
 #define LOGI(...) __android_log_print(ANDROID_LOG_INFO,  TAG, __VA_ARGS__)
 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, TAG, __VA_ARGS__)
+
+void llama_android_log(enum ggml_log_level level, const char * text, void *) {
+    android_LogPriority prio = ANDROID_LOG_INFO;
+    switch (level) {
+        case GGML_LOG_LEVEL_ERROR: prio = ANDROID_LOG_ERROR; break;
+        case GGML_LOG_LEVEL_WARN:  prio = ANDROID_LOG_WARN;  break;
+        case GGML_LOG_LEVEL_DEBUG: prio = ANDROID_LOG_DEBUG; break;
+        default: break;
+    }
+    const char * tag = TAG;
+    if (text && std::strstr(text, "ggml-hex")) tag = "ggml-hex";
+    __android_log_print(prio, tag, "%s", text ? text : "");
+}
 
 namespace {
 
@@ -87,6 +104,13 @@ struct Engine {
     // Выставляется из cancel() и читается abort-колбэком llama.cpp:
     // пользователь нажал следующую клавишу -- текущий разбор не нужен.
     std::atomic<bool> abort_flag{false};
+
+    // Снимок состояния после системной реплики (head). Пока человек дописывает
+    // ту же фразу, набор статей не меняется -- head тот же, и префилл ~300
+    // токенов судьи можно не гонять заново. ~20 МБ GDN+KV, в памяти процесса.
+    std::vector<llama_token> prefix_toks;
+    std::vector<uint8_t>     prefix_state;
+    llama_state_seq_flags    prefix_flags = LLAMA_STATE_SEQ_FLAGS_NONE;
 };
 
 bool abort_cb(void * data) {
@@ -105,6 +129,9 @@ std::string jstr(JNIEnv * env, jstring s) {
 // Имя загруженного варианта ggml-cpu ("android_armv8.2_2"); пусто, пока не
 // загружен. Бэкенд один на процесс, поэтому статик, а не поле Engine.
 std::string g_cpu_backend;
+// Куда уехали слои после последнего init: "HTP0" или "cpu".
+std::string g_accel = "cpu";
+bool        g_hexagon_ok = false;
 
 // Выбирает и грузит вариант ядер ggml-cpu под этот процессор.
 //
@@ -178,6 +205,62 @@ std::string load_cpu_backend(const std::string & dir) {
     return best_name;
 }
 
+void set_adsp_library_path(const std::string & lib_dir, const std::string & adsp_dir) {
+    std::string path = lib_dir;
+    if (!adsp_dir.empty()) {
+        path += ";";
+        path += adsp_dir;
+    }
+    path += ";/system/lib/rfsa/adsp;/system/vendor/lib/rfsa/adsp;/dsp";
+    setenv("ADSP_LIBRARY_PATH", path.c_str(), 1);
+    LOGI("ADSP_LIBRARY_PATH=%s", path.c_str());
+}
+
+std::string first_htp_device_name() {
+    const size_t n = ggml_backend_dev_count();
+    for (size_t i = 0; i < n; ++i) {
+        ggml_backend_dev_t dev = ggml_backend_dev_get(i);
+        const char * name = ggml_backend_dev_name(dev);
+        LOGI("ggml device %zu: %s", i, name ? name : "?");
+        if (name && std::strncmp(name, "HTP", 3) == 0) return name;
+    }
+    return std::string();
+}
+
+bool load_hexagon_backend(const std::string & dir) {
+    const std::string path = dir + "/libggml-hexagon.so";
+    if (!ggml_backend_load(path.c_str())) {
+        LOGE("ggml_backend_load(%s) не удался", path.c_str());
+        return false;
+    }
+    const std::string htp = first_htp_device_name();
+    if (htp.empty()) {
+        LOGE("libggml-hexagon загружен, но HTP-устройства нет");
+        return false;
+    }
+    LOGI("ggml-hexagon: устройство %s", htp.c_str());
+    return true;
+}
+
+bool ensure_hexagon(const std::string & lib_dir, const std::string & adsp_dir) {
+    static std::mutex mu;
+    static bool tried = false;
+    std::lock_guard<std::mutex> lock(mu);
+    if (tried) return g_hexagon_ok;
+    tried = true;
+    set_adsp_library_path(lib_dir, adsp_dir);
+    try {
+        g_hexagon_ok = load_hexagon_backend(lib_dir);
+    } catch (const std::exception & ex) {
+        LOGE("hexagon: %s", ex.what());
+        g_hexagon_ok = false;
+    } catch (...) {
+        LOGE("hexagon: неизвестное исключение при загрузке");
+        g_hexagon_ok = false;
+    }
+    return g_hexagon_ok;
+}
+
 std::vector<llama_token> tokenize(const llama_vocab * vocab,
                                   const std::string & text,
                                   bool add_special) {
@@ -201,11 +284,59 @@ void reset_state(Engine * e) {
     llama_memory_clear(llama_get_memory(e->ctx), /*data*/ true);
 }
 
+void prefix_clear(Engine * e) {
+    e->prefix_toks.clear();
+    e->prefix_state.clear();
+    e->prefix_flags = LLAMA_STATE_SEQ_FLAGS_NONE;
+}
+
+bool decode_tokens(Engine * e, const llama_token * toks, int n) {
+    if (n <= 0) return true;
+    llama_batch b = llama_batch_get_one(const_cast<llama_token *>(toks), n);
+    return llama_decode(e->ctx, b) == 0;
+}
+
+bool prefix_save(Engine * e, const std::vector<llama_token> & head) {
+    llama_state_seq_flags flags = LLAMA_STATE_SEQ_FLAGS_NONE;
+    size_t n = llama_state_seq_get_size_ext(e->ctx, 0, flags);
+    if (n == 0) {
+        prefix_clear(e);
+        return false;
+    }
+    e->prefix_state.resize(n);
+    size_t got = llama_state_seq_get_data_ext(e->ctx, e->prefix_state.data(), n, 0, flags);
+    if (got == 0) {
+        prefix_clear(e);
+        return false;
+    }
+    e->prefix_state.resize(got);
+    e->prefix_toks = head;
+    e->prefix_flags = flags;
+    LOGI("prompt cache SAVE %d токенов, %d байт", (int) head.size(), (int) got);
+    return true;
+}
+
+bool prefix_restore(Engine * e) {
+    if (e->prefix_state.empty()) return false;
+    reset_state(e);
+    size_t got = llama_state_seq_set_data_ext(
+        e->ctx, e->prefix_state.data(), e->prefix_state.size(), 0, e->prefix_flags);
+    if (got == 0) return false;
+    const llama_pos pmax = llama_memory_seq_pos_max(llama_get_memory(e->ctx), 0);
+    if (pmax + 1 != (llama_pos) e->prefix_toks.size()) {
+        LOGE("prompt cache: pos_max %d, ждали %d",
+             (int) pmax, (int) e->prefix_toks.size() - 1);
+        return false;
+    }
+    return true;
+}
+
 struct Stats {
     long prompt_tokens = 0;
     long prefill_ms    = 0;
     long decode_ms     = 0;
     long gen_tokens    = 0;
+    long cache_hit     = 0;
 };
 
 // Один разбор: собрать промпт по чат-шаблону, префиллить и выбрать один
@@ -234,7 +365,6 @@ int decide(Engine * e,
     if (alts.empty()) return -1;
 
     e->abort_flag.store(false);
-    reset_state(e);
 
     // Токенизируем кусками: между ними стоят спецтокены чат-шаблона, так что
     // BPE не сольёт токены через границу, а обрезать длинное сообщение можно
@@ -262,23 +392,53 @@ int decide(Engine * e,
         body.erase(body.begin(), body.end() - budget);
     }
 
-    std::vector<llama_token> toks = head;
-    toks.insert(toks.end(), body.begin(), body.end());
-    toks.insert(toks.end(), tail.begin(), tail.end());
+    std::vector<llama_token> rest;
+    rest.reserve(body.size() + tail.size());
+    rest.insert(rest.end(), body.begin(), body.end());
+    rest.insert(rest.end(), tail.begin(), tail.end());
 
-    if (st) st->prompt_tokens = (long) toks.size();
+    if (st) st->prompt_tokens = (long) (head.size() + rest.size());
 
     steady::time_point t0 = steady::now();
-    llama_batch batch = llama_batch_get_one(toks.data(), (int32_t) toks.size());
-    if (llama_decode(e->ctx, batch) != 0) {
-        // Отмена через abort-колбэк тоже приходит сюда как ненулевой код:
-        // человек нажал следующую клавишу, это штатно, а не ошибка.
-        if (e->abort_flag.load(std::memory_order_relaxed)) {
-            LOGI("разбор отменён на префилле (%d токенов)", (int) toks.size());
-        } else {
-            LOGE("префилл не прошёл (%d токенов)", (int) toks.size());
+
+    const bool cache_ok = e->prefix_toks == head && !e->prefix_state.empty()
+        && prefix_restore(e);
+    if (cache_ok) {
+        if (st) st->cache_hit = 1;
+        LOGI("prompt cache HIT head=%d rest=%d", (int) head.size(), (int) rest.size());
+        if (!decode_tokens(e, rest.data(), (int) rest.size())) {
+            if (e->abort_flag.load(std::memory_order_relaxed)) {
+                LOGI("разбор отменён на префилле (cache hit, rest %d)", (int) rest.size());
+            } else {
+                LOGE("префилл хвоста не прошёл (cache hit, rest %d)", (int) rest.size());
+                prefix_clear(e);
+            }
+            return -1;
         }
-        return -1;
+    } else {
+        if (st) st->cache_hit = 0;
+        reset_state(e);
+        if (!decode_tokens(e, head.data(), (int) head.size())) {
+            if (e->abort_flag.load(std::memory_order_relaxed)) {
+                LOGI("разбор отменён на префилле head (%d)", (int) head.size());
+            } else {
+                LOGE("префилл head не прошёл (%d токенов)", (int) head.size());
+            }
+            prefix_clear(e);
+            return -1;
+        }
+        if (e->abort_flag.load(std::memory_order_relaxed)) return -1;
+        if (!prefix_save(e, head)) {
+            LOGI("prompt cache: снимок head не сохранился, дальше без кэша");
+        }
+        if (!decode_tokens(e, rest.data(), (int) rest.size())) {
+            if (e->abort_flag.load(std::memory_order_relaxed)) {
+                LOGI("разбор отменён на префилле rest (%d)", (int) rest.size());
+            } else {
+                LOGE("префилл rest не прошёл (%d токенов)", (int) rest.size());
+            }
+            return -1;
+        }
     }
     if (st) st->prefill_ms = ms_since(t0);
     if (e->abort_flag.load(std::memory_order_relaxed)) return -1;
@@ -379,13 +539,18 @@ extern "C" {
 JNIEXPORT jlong JNICALL
 Java_dev_souchastnik_engine_LlamaBridge_init(JNIEnv * env, jobject,
                                             jstring jmodel, jstring jlib_dir,
-                                            jint n_threads) {
+                                            jint n_threads, jboolean force_cpu,
+                                            jstring j_adsp_dir) {
     // Бэкенд поднимается один раз на процесс. Сначала вариант ggml-cpu,
     // потом llama_backend_init: без загруженного CPU-бэкенда модель не
     // загрузится, и ошибка была бы невнятной ("no backends").
+    const std::string lib_dir  = jstr(env, jlib_dir);
+    const std::string adsp_dir = jstr(env, j_adsp_dir);
+
     static std::atomic<bool> backend_ready{false};
     if (!backend_ready.exchange(true)) {
-        g_cpu_backend = load_cpu_backend(jstr(env, jlib_dir));
+        llama_log_set(llama_android_log, nullptr);
+        g_cpu_backend = load_cpu_backend(lib_dir);
         llama_backend_init();
     }
     if (g_cpu_backend.empty()) {
@@ -393,18 +558,32 @@ Java_dev_souchastnik_engine_LlamaBridge_init(JNIEnv * env, jobject,
         return 0;
     }
 
+    const bool want_htp = force_cpu == JNI_FALSE && ensure_hexagon(lib_dir, adsp_dir);
+
     Engine * e = new Engine();
     const std::string model_path = jstr(env, jmodel);
 
     llama_model_params mp = llama_model_default_params();
     // В этой ревизии llama.cpp use_mmap/use_mlock заменены полем load_mode:
     // модель лежит распакованной в nativeLibraryDir, mmap без mlock -- лочить
-    // 500 МБ на телефоне нельзя.
-    mp.load_mode = LLAMA_LOAD_MODE_MMAP;
-    mp.n_gpu_layers = 0;   // CPU. Vulkan-бэкенд для DeltaNet-ops пока лотерея,
-                           // включать только после замеров на устройстве
+    // 500 МБ на телефоне нельзя. Q4_0 всё равно уйдёт в HTP-REPACK буферы.
+    auto try_model = [&](int ngl, llama_load_mode mode) -> llama_model * {
+        mp.n_gpu_layers = ngl;
+        mp.load_mode    = mode;
+        return llama_model_load_from_file(model_path.c_str(), mp);
+    };
 
-    e->model = llama_model_load_from_file(model_path.c_str(), mp);
+    if (want_htp) {
+        e->model = try_model(-1, LLAMA_LOAD_MODE_MMAP);
+        if (!e->model) {
+            LOGI("NPU+mmap не поднялся, пробуем без mmap");
+            e->model = try_model(-1, LLAMA_LOAD_MODE_NONE);
+        }
+    }
+    if (!e->model) {
+        if (want_htp) LOGI("NPU не поднялся, CPU");
+        e->model = try_model(0, LLAMA_LOAD_MODE_MMAP);
+    }
     if (!e->model) {
         LOGE("не удалось загрузить модель: %s", model_path.c_str());
         delete e;
@@ -422,22 +601,38 @@ Java_dev_souchastnik_engine_LlamaBridge_init(JNIEnv * env, jobject,
     cp.abort_callback_data = e;
 
     e->ctx = llama_init_from_model(e->model, cp);
+    if (!e->ctx && mp.n_gpu_layers != 0) {
+        LOGI("контекст с NPU не поднялся, CPU");
+        llama_model_free(e->model);
+        e->model = try_model(0, LLAMA_LOAD_MODE_MMAP);
+        if (e->model) {
+            e->vocab = llama_model_get_vocab(e->model);
+            e->eos   = llama_vocab_eos(e->vocab);
+            e->ctx   = llama_init_from_model(e->model, cp);
+        }
+    }
     if (!e->ctx) {
         LOGE("не удалось создать контекст");
-        llama_model_free(e->model);
+        if (e->model) llama_model_free(e->model);
         delete e;
         return 0;
     }
 
-    LOGI("движок готов: ggml-cpu %s, n_ctx %d, потоков %d, eos %d",
-         g_cpu_backend.c_str(), N_CTX, (int) n_threads, (int) e->eos);
+    g_accel = (mp.n_gpu_layers != 0) ? first_htp_device_name() : "cpu";
+    if (g_accel.empty()) g_accel = "cpu";
+
+    LOGI("движок готов: %s+%s, n_gpu_layers %d, n_ctx %d, потоков %d, eos %d",
+         g_cpu_backend.c_str(), g_accel.c_str(), (int) mp.n_gpu_layers,
+         N_CTX, (int) n_threads, (int) e->eos);
     return reinterpret_cast<jlong>(e);
 }
 
-/** Имя варианта ядер ggml-cpu, выбранного под этот процессор; "" до init. */
+/** Имя бэкенда: вариант ggml-cpu плюс HTP0 или cpu. Пусто до init. */
 JNIEXPORT jstring JNICALL
 Java_dev_souchastnik_engine_LlamaBridge_backendName(JNIEnv * env, jobject) {
-    return env->NewStringUTF(g_cpu_backend.c_str());
+    if (g_cpu_backend.empty()) return env->NewStringUTF("");
+    const std::string name = g_cpu_backend + "+" + g_accel;
+    return env->NewStringUTF(name.c_str());
 }
 
 /**
@@ -469,9 +664,11 @@ Java_dev_souchastnik_engine_LlamaBridge_decide(JNIEnv * env, jobject,
                            (float) noneBias, &st);
 
     if (jstats && env->GetArrayLength(jstats) >= 4) {
-        jlong vals[4] = { (jlong) st.prompt_tokens, (jlong) st.prefill_ms,
-                          (jlong) st.decode_ms,     (jlong) st.gen_tokens };
-        env->SetLongArrayRegion(jstats, 0, 4, vals);
+        jlong vals[5] = { (jlong) st.prompt_tokens, (jlong) st.prefill_ms,
+                          (jlong) st.decode_ms,     (jlong) st.gen_tokens,
+                          (jlong) st.cache_hit };
+        const jsize nstats = env->GetArrayLength(jstats);
+        env->SetLongArrayRegion(jstats, 0, nstats >= 5 ? 5 : 4, vals);
     }
     return idx;
 }

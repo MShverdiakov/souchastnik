@@ -33,3 +33,19 @@ target_link_libraries(souchastnik
     ggml
     android
     log)
+
+# HTP-skel -- DSP ELF, не ARM. ExternalProject кладёт их в каталог
+# ggml-hexagon, AGP забирает в APK только CMAKE_LIBRARY_OUTPUT_DIRECTORY.
+# libggml-hexagon.so (ARM host) туда уже попадает через CMAKE_RUNTIME_OUTPUT_DIRECTORY.
+if (GGML_HEXAGON AND CMAKE_LIBRARY_OUTPUT_DIRECTORY)
+    set(_htp_skel_dir ${CMAKE_BINARY_DIR}/llama.cpp/ggml/src/ggml-hexagon)
+    foreach(_v v73 v75 v79 v81)
+        add_dependencies(souchastnik htp-${_v})
+    endforeach()
+    add_custom_command(TARGET souchastnik POST_BUILD
+        COMMAND ${CMAKE_COMMAND}
+            -Dsrc_root=${_htp_skel_dir}
+            -Ddst_dir=${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
+            -P ${CMAKE_CURRENT_SOURCE_DIR}/copy_htp_skels.cmake
+        COMMENT "copy libggml-htp-v*.so into AGP jni output")
+endif()

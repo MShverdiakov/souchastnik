@@ -38,6 +38,12 @@ Cortex-A53/A73) до `armv9.2_2` (i8mm, SVE, SME). Они НЕ лежат в э�
 через `ggml_backend_load` (`load_cpu_backend()` в `llama_bridge.cpp`). Имя
 файла — контракт: префикс `libggml-cpu-` и суффикс `.so`.
 
+Если сборка с Hexagon SDK, сюда же попадут `libggml-hexagon.so` и DSP-skel
+`libggml-htp-v*.so`. Skel — не ARM, `llvm-strip` их портит; AGP не должен
+их страйпать (`keepDebugSymbols` в `build.gradle.kts`). Перед запуском мост
+копирует skel в `filesDir/htp` с режимом 0644: CDSP иначе часто не читает
+`nativeLibraryDir`. Подробности — в `CHANGELOG.md`.
+
 ## Откуда взять файл
 
 Для спайка (замер скорости, обучение не нужно):

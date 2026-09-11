@@ -13,7 +13,8 @@ import dev.souchastnik.data.Triggers
  * Спайк на устройстве. Запускается напрямую:
  *
  *   adb shell am start -n dev.souchastnik/.engine.BenchActivity
- *   adb logcat -s souchastnik-bench souchastnik-native
+ *   adb shell am start -n dev.souchastnik/.engine.BenchActivity --ez cpu true
+ *   adb logcat -s souchastnik-bench:I souchastnik-native:I ggml-hex:I
  *
  * Гоняет ровно тот конвейер, что и tools/bench_variants.py judge:
  * словарь триггеров сужает справочник, судья выбирает код статьи из
@@ -94,6 +95,9 @@ class BenchActivity : Activity() {
         val threads = intent?.getIntExtra("threads", 0)?.takeIf { it > 0 } ?: Cpu.threadCount()
         log("потоков: $threads")
 
+        val forceCpu = intent?.getBooleanExtra("cpu", false) == true
+        if (forceCpu) log("форс CPU (--ez cpu true)")
+
         // Пауза между фразами в секундах — имитация набора с перерывами на
         // телефонах с 3–4 ГБ RAM: вытесняет ли система страницы mmap модели,
         // пока человек думает (тогда фраза после паузы заметно дольше):
@@ -102,12 +106,16 @@ class BenchActivity : Activity() {
         if (pauseSec > 0) log("пауза между фразами: $pauseSec с")
 
         val t0 = System.currentTimeMillis()
-        val h = LlamaBridge.init(model.absolutePath, applicationInfo.nativeLibraryDir, threads)
+        val adsp = LlamaBridge.stageHtpSkels(
+            applicationInfo.nativeLibraryDir, java.io.File(filesDir, "htp"))
+        val h = LlamaBridge.init(
+            model.absolutePath, applicationInfo.nativeLibraryDir, threads,
+            forceCpu = forceCpu, adspDir = adsp)
         if (h == 0L) {
             log("init ПРОВАЛИЛСЯ — смотри logcat souchastnik-native")
             return
         }
-        log("загрузка: ${System.currentTimeMillis() - t0} мс, ggml-cpu: ${LlamaBridge.backendName()}")
+        log("загрузка: ${System.currentTimeMillis() - t0} мс, backend: ${LlamaBridge.backendName()}")
 
         val cacheOk = LlamaBridge.probeStateCache(h, "${cacheDir.absolutePath}/state.bin")
         log("prompt cache: ${if (cacheOk) "РАБОТАЕТ" else "НЕ РАБОТАЕТ"}")
@@ -121,7 +129,7 @@ class BenchActivity : Activity() {
                                LlamaBridge.NONE_BIAS, null)
         }
 
-        log("%-46s %-8s %-8s %s".format("фраза", "ждём", "вердикт", "мс (промпт/декод)"))
+        log("%-46s %-8s %-8s %s".format("фраза", "ждём", "вердикт", "мс кэш (промпт/декод)"))
         val totals = ArrayList<Long>()
         var hits = 0
 
@@ -132,7 +140,7 @@ class BenchActivity : Activity() {
 
         for ((text, want) in cases) {
             if (pauseSec > 0) Thread.sleep(pauseSec * 1000L)
-            val stats = LongArray(4)
+            val stats = LongArray(5)
             var promptTokens = 0L
             var ms = 0L
             var verdict: String
@@ -155,8 +163,13 @@ class BenchActivity : Activity() {
 
             if (verdict == want || (want.contains('/') && want.split('/').contains(verdict))) hits++
             if (ms > 0) totals += ms
-            log("%-46s %-8s %-8s %5dм (%d т)".format(
-                text.take(44), want, verdict, ms, promptTokens))
+            val cache = when {
+                ms == 0L -> "—"
+                stats[4] == 1L -> "HIT"
+                else -> "miss"
+            }
+            log("%-46s %-8s %-8s %5dм %s (%d т)".format(
+                text.take(44), want, verdict, ms, cache, promptTokens))
         }
 
         log("")
@@ -165,6 +178,32 @@ class BenchActivity : Activity() {
             totals.sort()
             log("медиана: ${totals[totals.size / 2]} мс, максимум: ${totals.last()} мс")
             log("(медиана только по фразам, где модель реально крутилась)")
+        }
+
+        // Имитация набора: системка судьи та же, растёт только user-текст.
+        // Это то, что человек чувствует между клавишами, а не набор разных статей.
+        log("")
+        log("набор одной фразы (кэш системки):")
+        val typing = listOf(
+            "ты совсем дурак",
+            "ты совсем дурак что",
+            "ты совсем дурак что ли",
+        )
+        for (text in typing) {
+            val hit = Triggers.match(text)
+            if (hit.codes.isEmpty()) {
+                log("%-46s (триггеры молчат)".format(text.take(44)))
+                continue
+            }
+            val stats = LongArray(5)
+            val alts = (listOf(Articles.NONE) + hit.codes).toTypedArray()
+            val system = Articles.judgeSystem(hit.codes, hit.clean)
+            LlamaBridge.decide(h, system, text, alts, LlamaBridge.NONE_BIAS, stats)
+            val ms = stats[1] + stats[2]
+            log("%-46s %5dм %s (head+rest %d т, префилл %dм декод %dм)".format(
+                text.take(44), ms,
+                if (stats[4] == 1L) "HIT" else "miss",
+                stats[0], stats[1], stats[2]))
         }
 
         LlamaBridge.free(h)

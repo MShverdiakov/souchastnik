@@ -1,17 +1,22 @@
 # Ревизия llama.cpp, под которую написан app/src/main/cpp/llama_bridge.cpp.
 #
-# Проверено 2026-08-31: в этой ревизии есть LLM_ARCH_QWEN35 (имя в GGUF
-# "qwen35") и все 35 функций, которые вызывает llama_bridge.cpp.
-# Соответствует релизу b10726. Перепроверить командой:
+# Проверено 2026-09-11: есть LLM_ARCH_QWEN35, ggml-hexagon и HTP-ядро
+# GGML_OP_GATED_DELTA_NET (после #22837 / #23989). JNI-контракт моста
+# (llama_model_load_from_file, llama_init_from_model, llama_memory_clear,
+# load_mode, llama_state_seq_save_file) на этом SHA живой.
 #   git -C third_party/llama.cpp rev-parse HEAD
 #
-# Требование: ревизия ДОЛЖНА содержать поддержку архитектуры qwen35
-# (Gated DeltaNet). Более старые сборки не загрузят модель вообще.
+# Требование: ревизия ДОЛЖНА содержать и qwen35 (Gated DeltaNet), и
+# ggml-hexagon. Более старые сборки не загрузят модель или не соберут HTP.
 #
 # API llama.cpp ломается регулярно. Симптомы устаревшего моста:
 #   - llama_memory_clear не найден      -> раньше звался llama_kv_cache_clear
 #   - llama_init_from_model не найден   -> раньше llama_new_context_with_model
 #   - llama_model_load_from_file        -> раньше llama_load_model_from_file
 # Обновление сабмодуля -- всегда отдельный коммит с проверкой сборки.
+#
+# После checkout пина наложить локальный патч (third_party/ в git не едет):
+#   git -C third_party/llama.cpp apply ../../tools/patches/llama.cpp-hexagon-ninja.patch
+# Иначе вложенный cmake HTP не находит ninja (CMAKE_MAKE_PROGRAM).
 
-PIN=85c55223caf0a2ad0d1d88e5a73ab3fe36107867
+PIN=5bda51bfbc62e64193221e639f6ad4e08767d760

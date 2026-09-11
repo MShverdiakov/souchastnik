@@ -1,0 +1,12 @@
+diff --git a/ggml/src/ggml-hexagon/CMakeLists.txt b/ggml/src/ggml-hexagon/CMakeLists.txt
+index 845b922..9d941d6 100644
+--- a/ggml/src/ggml-hexagon/CMakeLists.txt
++++ b/ggml/src/ggml-hexagon/CMakeLists.txt
+@@ -65,6 +65,7 @@ function(build_htp_skel V)
+         BUILD_BYPRODUCTS ${CMAKE_CURRENT_BINARY_DIR}/libggml-htp-${V}.so
+         CMAKE_ARGS
+             -DCMAKE_BUILD_TYPE=Release
++            -DCMAKE_MAKE_PROGRAM=${CMAKE_MAKE_PROGRAM}
+             -DCMAKE_TOOLCHAIN_FILE=${CMAKE_CURRENT_SOURCE_DIR}/htp/cmake-toolchain.cmake
+             -DCMAKE_INSTALL_LIBDIR=${CMAKE_CURRENT_BINARY_DIR}
+             -DHEXAGON_SDK_ROOT=${HEXAGON_SDK_ROOT}
