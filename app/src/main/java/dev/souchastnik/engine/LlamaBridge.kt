@@ -1,5 +1,10 @@
 package dev.souchastnik.engine
 
+import android.system.Os
+import android.system.OsConstants
+import android.util.Log
+import java.io.File
+
 /**
  * Тонкая обёртка над llama.cpp. Живёт только в процессе :engine.
  *
@@ -52,12 +57,25 @@ object LlamaBridge {
     /**
      * @param libDir `applicationInfo.nativeLibraryDir`: здесь лежат варианты
      *   ядер `libggml-cpu-android_*.so`, из которых мост выберет подходящий
-     *   процессору (см. `load_cpu_backend` в llama_bridge.cpp).
+     *   процессору (см. `load_cpu_backend` в llama_bridge.cpp), и
+     *   `libggml-hexagon.so`.
+     * @param forceCpu не грузить HTP, все слои на CPU. Для A/B в BenchActivity.
+     * @param adspDir каталог с копиями `libggml-htp-v*.so` (обычно filesDir/htp):
+     *   CDSP часто не читает nativeLibraryDir из‑за SELinux.
      * @return хендл движка, 0 — ошибка (в т. ч. ни один вариант не подошёл)
      */
-    external fun init(modelPath: String, libDir: String, nThreads: Int): Long
+    external fun init(
+        modelPath: String,
+        libDir: String,
+        nThreads: Int,
+        forceCpu: Boolean = false,
+        adspDir: String = "",
+    ): Long
 
-    /** Имя выбранного варианта ядер, например `android_armv8.2_2`; "" до init. */
+    /**
+     * Имя бэкенда: вариант ядер плюс куда уехали слои, например
+     * `android_armv8.6_1+HTP0` или `android_armv8.6_1+cpu`. Пусто до init.
+     */
     external fun backendName(): String
 
     /**
@@ -72,7 +90,8 @@ object LlamaBridge {
      *   alts[0] — "none".
      * @param noneBias сдвиг порога «чисто», обычно [NONE_BIAS].
      * @param stats если передан массив длиной не меньше 4, заполняется как
-     *   [промпт в токенах, префилл мс, декод мс, сгенерировано токенов].
+     *   [промпт в токенах, префилл мс, декод мс, сгенерировано токенов];
+     *   пятый элемент, если есть — 1 при попадании в кэш системного префикса.
      * @return индекс выбранного варианта в [alts], либо [ERROR]
      */
     external fun decide(
@@ -98,4 +117,41 @@ object LlamaBridge {
      * трансформеров. Если здесь false — полный префилл на каждый запрос.
      */
     external fun probeStateCache(handle: Long, path: String): Boolean
+
+    /**
+     * Копирует HTP-skel в [destDir] с режимом 0644: CDSP читает файл из
+     * другого процесса и часто не видит `/data/app/.../lib/arm64`.
+     * @return абсолютный путь [destDir]
+     */
+    fun stageHtpSkels(libDir: String, destDir: File): String {
+        destDir.mkdirs()
+        val srcDir = File(libDir)
+        val skels = srcDir.listFiles()
+            ?.filter { it.name.startsWith("libggml-htp-") && it.name.endsWith(".so") }
+            .orEmpty()
+        if (skels.isEmpty()) {
+            Log.w(TAG, "HTP-skel не найдены в $libDir")
+            return destDir.absolutePath
+        }
+        val mode = OsConstants.S_IRUSR or OsConstants.S_IWUSR or
+            OsConstants.S_IRGRP or OsConstants.S_IROTH
+        for (src in skels) {
+            val dst = File(destDir, src.name)
+            if (!dst.exists() || dst.length() != src.length() ||
+                dst.lastModified() < src.lastModified()
+            ) {
+                src.copyTo(dst, overwrite = true)
+            }
+            try {
+                Os.chmod(dst.absolutePath, mode)
+            } catch (e: Exception) {
+                Log.w(TAG, "chmod ${dst.name}: ${e.message}")
+                dst.setReadable(true, false)
+            }
+        }
+        Log.i(TAG, "HTP-skel: ${skels.size} шт. в ${destDir.absolutePath}")
+        return destDir.absolutePath
+    }
+
+    private const val TAG = "souchastnik-native"
 }

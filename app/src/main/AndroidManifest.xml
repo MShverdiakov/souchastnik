@@ -37,6 +37,15 @@
         android:supportsRtl="false"
         android:theme="@style/Theme.Souchastnik">
 
+        <!-- FastRPC на Snapdragon: libcdsprpc.so в /vendor/lib64, в APK не кладём.
+             Без uses-native-library линкер приложения её не видит (namespace). -->
+        <uses-native-library
+            android:name="libcdsprpc.so"
+            android:required="false" />
+        <uses-native-library
+            android:name="libadsprpc.so"
+            android:required="false" />
+
         <service
             android:name=".ime.SouchastnikIME"
             android:exported="true"

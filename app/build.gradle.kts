@@ -33,6 +33,18 @@ val keystoreProps = rootProject.file("keystore.properties")
         props
     }
 
+// Путь Hexagon SDK: local.properties (hexagon.sdk.dir) или HEXAGON_SDK_ROOT.
+// В git не коммитится. Без SDK собираемся только с CPU — как до NPU.
+val hexagonSdkRoot: String = run {
+    val props = Properties()
+    rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use {
+        props.load(it)
+    }
+    props.getProperty("hexagon.sdk.dir")
+        ?: System.getenv("HEXAGON_SDK_ROOT")
+        ?: ""
+}
+
 android {
     namespace = "dev.souchastnik"
     compileSdk = 35
@@ -77,6 +89,20 @@ android {
                     "-DGGML_LLAMAFILE=OFF",
                     "-DGGML_OPENMP=OFF",
                 )
+                // NPU (Hexagon HTP). OpenCL/Adreno не включаем.
+                if (hexagonSdkRoot.isNotBlank()) {
+                    arguments += listOf(
+                        "-DGGML_HEXAGON=ON",
+                        "-DHEXAGON_SDK_ROOT=$hexagonSdkRoot",
+                        "-DHEXAGON_TOOLS_ROOT=$hexagonSdkRoot/tools/HEXAGON_Tools/19.0.07",
+                        // hexagon_fun.cmake делает string(FIND ${PREBUILT_LIB_DIR} ...)
+                        // ещё на host-сборке ARM libggml-hexagon.so; без значения cmake падает.
+                        "-DPREBUILT_LIB_DIR=toolv19_v79",
+                    )
+                } else {
+                    logger.lifecycle(
+                        "souchastnik: Hexagon SDK не задан (hexagon.sdk.dir / HEXAGON_SDK_ROOT) — сборка без NPU")
+                }
                 cppFlags += "-O3"
             }
         }
@@ -89,6 +115,11 @@ android {
     packaging {
         jniLibs {
             useLegacyPackaging = true
+            // HTP-skel -- DSP ELF, llvm-strip ломает файл (как libmodel-*.so).
+            keepDebugSymbols += setOf(
+                "**/libggml-htp-*.so",
+                "**/libmodel-*.so",
+            )
         }
     }
 
@@ -99,7 +130,8 @@ android {
     externalNativeBuild {
         cmake {
             path = file("src/main/cpp/CMakeLists.txt")
-            version = "3.22.1"
+            // htp/CMakeLists.txt llama.cpp требует ≥ 3.22.2
+            version = "3.31.6"
         }
     }
 
